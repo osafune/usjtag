@@ -9,7 +9,7 @@ FTDI USBシリアル変換（FT230X/FT231X/FT234XD）を使って、Intel FPGA�
 	- 2Mbpsの調歩同期で接続されるためJTAG転送速度は遅くなります
 
 # License
-The MIT License (MIT)
+The MIT License (MIT)  
 Copyright (c) 2020 J-7SYSTEM WORKS LIMITED.
 
 # How to use
