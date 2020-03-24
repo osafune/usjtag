@@ -1,8 +1,8 @@
 // ===================================================================
-// TITLE : USB-Serial to Soft core JTAG I/O
+// TITLE : USB-Serial to Soft core JTAG I/O with SFL
 //
 //     DESIGN : s.osafune@j7system.jp (J-7SYSTEM WORKS LIMITED)
-//     DATE   : 2020/02/27 -> 2020/03/03
+//     DATE   : 2020/02/27 -> 2020/03/25
 //
 // ===================================================================
 //
@@ -28,13 +28,18 @@
 // SOFTWARE.
 //
 
+
 `default_nettype none
 
+// SUPPORTED_DEVICE_FAMILIES {"MAX 10" "Cyclone IV E" "Cyclone IV GX" "Cyclone 10 LP" "Cyclone V"}
+
 module usjtag #(
+	parameter DEVICE_FAMILY		= "Cyclone IV E",
 	parameter CLOCK_FREQUENCY	= 50000000,
 	parameter UART_BAUDRATE		= 2000000,
 	parameter TCK_FREQUENCY		= 25000000,
-	parameter USE_SOFTCORE_JTAG	= "ENABLE"
+	parameter USE_SOFTCORE_JTAG	= "ON",
+	parameter USE_SERIAL_FLASH_LOADER = "OFF"
 ) (
 	// clock and system reset
 	input wire		reset,
@@ -44,14 +49,21 @@ module usjtag #(
 	input wire		ft_rxd,
 	output wire		ft_txd,
 
-	// JTAG signal (Invalid, when USE_SOFTCORE_JTAG is "ENABLE")
+	// JTAG access signal
+	output wire		active,
+
+	// JTAG signal (Invalid, when USE_SOFTCORE_JTAG is "ON")
 	output wire		jtag_tck,
 	output wire		jtag_tms,
 	output wire		jtag_tdi,
 	input wire		jtag_tdo,
 
-	// JTAG access signal
-	output wire		active
+	// Serial Flash Loader signal (Valid, when USE_SOFTCORE_JTAG and USE_SERIAL_FLASH_LOADER is "ON")
+	input wire		sfl_enable,
+	input wire		asmi_nsco_in,
+	input wire		asmi_dclk_in,
+	input wire		asmi_asdo_in,
+	output wire		asmi_data0_out
 );
 
 
@@ -143,7 +155,7 @@ module usjtag #(
 
 
 generate
-	if (USE_SOFTCORE_JTAG == "ENABLE") begin
+	if (USE_SOFTCORE_JTAG == "ON") begin
 		altera_soft_core_jtag_io #(
 			.ENABLE_JTAG_IO_SELECTION	(0)
 		)
@@ -167,5 +179,31 @@ generate
 	end
 endgenerate
 
+generate
+	if (USE_SOFTCORE_JTAG == "ON" && USE_SERIAL_FLASH_LOADER == "ON" && DEVICE_FAMILY != "MAX 10") begin
+		altserial_flash_loader #(
+			.enable_quad_spi_support	(0),
+			.enable_shared_access		("ON"),
+			.enhanced_mode				(1),
+			.intended_device_family		(DEVICE_FAMILY),
+			.ncso_width					(1)
+		)
+		u_sfl (
+			.scein		(asmi_nsco_in),
+			.dclkin		(asmi_dclk_in),
+			.sdoin		(asmi_asdo_in),
+			.data0out	(asmi_data0_out),
+			.asmi_access_granted	(sfl_enable),
+			.asmi_access_request	(),
+			.data_in	(),
+			.data_oe	(),
+			.data_out	(),
+			.noe		(1'b0)
+		);
+	end
+	else begin
+		assign asmi_data0_out = 1'b0;
+	end
+endgenerate
 
 endmodule
