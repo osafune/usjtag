@@ -38,6 +38,7 @@ usjtag_inst (
 |DEVICE_FAMILY|string|"Cyclone IV E"|デバイスファミリー名を文字列で指定します。以下のデバイスが指定できます。<br>"Cyclone IV E"<br>"Cyclone IV GX"<br>"Cyclone 10 LP"<br>"Cyclone V"<br>"MAX 10"|
 |CLOCK_FREQUENCY|integer|50000000|clockポートに入力するクロック周波数を指定します。値は16000000(16MHz)以上で2000000(2MHz)の倍数値でなければなりません。|
 |USE_SERIAL_FLASH_LOADER|string|"OFF"|Serial Flash Loaderを同時にインスタンスする場合には"ON"を指定します。Serial Flash LoaderはCycloneデバイスファミリーでのみインスタンスできます。|
+
 例) Cyclone10LPでSFLを使う場合
 ```verilog
 usjtag #(
