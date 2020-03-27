@@ -30,6 +30,16 @@ usjtag_inst (
 3. FT_Progを使ってFT234XのNVMを以下のように書き換えます。
 	- `USB String Descriptors/Product Description` に "USB-Blaster" を設定
 	- `Hardware Specific/Port A/Driver` は `D2XX Direct` を選択
+* 上記操作をしてもProgrammerからUSB-Blasterとして認識されない場合。
+	1. デバイスマネージャーを開いて `ユニバーサル シリアル バス コントローラー` 以下にある `USB Serial Converter` を右クリック→ `ドライバーの更新` を選択
+	2. `コンピューターを参照してドライバーソフトウェアを検索` を選択
+	3. `コンピューター上の利用可能なドライバーの一覧から選択します` を選択
+	4. `☑ 互換性のあるハードウェアを表示` のチェックを外す
+	5. 製造元リストから `Altera` を選択し、モデルのリストから `Altera USB-Blaster` を選択して `次へ` をクリック
+	6. ドライバーの更新警告に `はい` を選択
+	7. Quartus Prime ProgrammerからUSB-Blasterとして認識されているのを確認します
+	8. デバイスマネージャーでは一時的に `Altera USB-Blaster` になっているので、右クリック→ `ドライバーの更新` を選択
+	9. `ドライバーソフトウェアの最新版を自動検索` を選択して、ドライバーを元に戻します
 <br>
 
 ### インスタンスオプション
