@@ -2,7 +2,7 @@
 // TITLE : USB-Serial to Soft core JTAG I/O with SFL
 //
 //     DESIGN : s.osafune@j7system.jp (J-7SYSTEM WORKS LIMITED)
-//     DATE   : 2020/02/27 -> 2020/03/25
+//     DATE   : 2020/02/27 -> 2020/03/31
 //
 // ===================================================================
 //
@@ -36,7 +36,7 @@
 module usjtag #(
 	parameter DEVICE_FAMILY		= "Cyclone IV E",
 	parameter CLOCK_FREQUENCY	= 50000000,
-	parameter UART_BAUDRATE		= 2000000,
+	parameter UART_BITRATE		= 2000000,
 	parameter TCK_FREQUENCY		= 25000000,
 	parameter USE_SOFTCORE_JTAG	= "ON",
 	parameter USE_SERIAL_FLASH_LOADER = "OFF"
@@ -105,9 +105,9 @@ module usjtag #(
 
 /* ===== モジュール構造記述 ============== */
 
-	peridot_phy_rxd #(
+	uart_phy_rxd #(
 		.CLOCK_FREQUENCY	(CLOCK_FREQUENCY),
-		.UART_BAUDRATE		(UART_BAUDRATE)
+		.UART_BITRATE		(UART_BITRATE)
 	)
 	u_rxd (
 		.reset		(reset_sig),
@@ -119,9 +119,9 @@ module usjtag #(
 		.rxd		(ft_rxd)
 	);
 
-	peridot_phy_txd #(
+	uart_phy_txd #(
 		.CLOCK_FREQUENCY	(CLOCK_FREQUENCY),
-		.UART_BAUDRATE		(UART_BAUDRATE)
+		.UART_BITRATE		(UART_BITRATE)
 	)
 	u_txd (
 		.reset		(reset_sig),
