@@ -36,7 +36,7 @@
 module usjtag #(
 	parameter DEVICE_FAMILY		= "Cyclone IV E",
 	parameter CLOCK_FREQUENCY	= 50000000,
-	parameter UART_BITRATE		= 2000000,
+	parameter UART_BAUDRATE		= 2000000,
 	parameter TCK_FREQUENCY		= 25000000,
 	parameter USE_SOFTCORE_JTAG	= "ON",
 	parameter USE_SERIAL_FLASH_LOADER = "OFF"
@@ -107,7 +107,7 @@ module usjtag #(
 
 	uart_phy_rxd #(
 		.CLOCK_FREQUENCY	(CLOCK_FREQUENCY),
-		.UART_BITRATE		(UART_BITRATE)
+		.UART_BAUDRATE		(UART_BAUDRATE)
 	)
 	u_rxd (
 		.reset		(reset_sig),
@@ -121,7 +121,7 @@ module usjtag #(
 
 	uart_phy_txd #(
 		.CLOCK_FREQUENCY	(CLOCK_FREQUENCY),
-		.UART_BITRATE		(UART_BITRATE)
+		.UART_BAUDRATE		(UART_BAUDRATE)
 	)
 	u_txd (
 		.reset		(reset_sig),
