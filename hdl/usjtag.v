@@ -4,6 +4,7 @@
 //     DESIGN : s.osafune@j7system.jp (J-7SYSTEM WORKS LIMITED)
 //     DATE   : 2020/02/27 -> 2020/03/31
 //
+//     UPDATE : 2021/01/04 module update (osafune@j7system.jp)
 // ===================================================================
 //
 // The MIT License (MIT)
@@ -38,6 +39,7 @@ module usjtag #(
 	parameter CLOCK_FREQUENCY	= 50000000,
 	parameter UART_BAUDRATE		= 2000000,
 	parameter TCK_FREQUENCY		= 25000000,
+	parameter USE_FLOWCONTROL	= "OFF",
 	parameter USE_SOFTCORE_JTAG	= "ON",
 	parameter USE_SERIAL_FLASH_LOADER = "OFF"
 ) (
@@ -48,6 +50,10 @@ module usjtag #(
 	// FT234X serial in/out
 	input wire		ft_rxd,
 	output wire		ft_txd,
+
+	// FT234X flow control (Valid, when USE_FLOWCONTROL is "ON")
+	output wire		ft_rts,
+	input wire		ft_cts,
 
 	// JTAG access signal
 	output wire		active,
@@ -95,6 +101,7 @@ module usjtag #(
 	wire			tms_sig;
 	wire			tdi_sig;
 	wire			tdo_sig;
+	wire			cts_sig;
 
 
 /* ※以降のwire、reg宣言は禁止※ */
@@ -116,7 +123,8 @@ module usjtag #(
 		.out_valid	(rx_valid_sig),
 		.out_data	(rx_data_sig),
 		.out_error	(),
-		.rxd		(ft_rxd)
+		.rxd		(ft_rxd),
+		.rts		(ft_rts)
 	);
 
 	uart_phy_txd #(
@@ -129,7 +137,8 @@ module usjtag #(
 		.in_ready	(tx_ready_sig),
 		.in_valid	(tx_valid_sig),
 		.in_data	(tx_data_sig),
-		.txd		(ft_txd)
+		.txd		(ft_txd),
+		.cts		(cts_sig)
 	);
 
 	avalonst_byte_to_ubjtag #(
@@ -153,6 +162,14 @@ module usjtag #(
 		.jtag_oe	(active)
 	);
 
+generate
+	if (USE_FLOWCONTROL == "ON") begin
+		assign cts_sig = ft_cts;
+	end
+	else begin
+		assign cts_sig = 1'b1;
+	end
+endgenerate
 
 generate
 	if (USE_SOFTCORE_JTAG == "ON") begin

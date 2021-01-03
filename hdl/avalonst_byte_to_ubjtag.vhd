@@ -4,6 +4,7 @@
 --     DESIGN : s.osafune@j7system.jp (J-7SYSTEM WORKS LIMITED)
 --     DATE   : 2020/02/27 -> 2020/03/03
 --
+--     UPDATE : 2021/01/04 s.osafune@j7system.jp
 -- ===================================================================
 
 -- The MIT License (MIT)
@@ -65,6 +66,9 @@ entity avalonst_byte_to_ubjtag is
 end avalonst_byte_to_ubjtag;
 
 architecture RTL of avalonst_byte_to_ubjtag is
+	function is_true(S:std_logic) return boolean is begin return(S='1'); end;
+	function is_false(S:std_logic) return boolean is begin return(S='0'); end;
+
 	type UB_STATE is (DATA_RX, DATA_TX, BITSET, TCKSET, BYTEDONE);
 	signal state : UB_STATE := DATA_RX;
 	signal tckkeepcount		: integer range 0 to TCK_KEEPCYCLE;
@@ -90,7 +94,7 @@ begin
 	----------------------------------------------
 
 	process (clock, reset) begin
-		if (reset = '1') then
+		if is_true(reset) then
 			state <= DATA_RX;
 			dir_reg <= '0';
 			bitcount_reg <= (others=>'0');
@@ -102,7 +106,7 @@ begin
 		elsif rising_edge(clock) then
 			case state is
 			when DATA_RX =>
-				if (in_valid = '1') then
+				if is_true(in_valid) then
 					if (bitcount_reg(8 downto 3) /= 0) then
 						state <= BITSET;
 						tckkeepcount <= 0;
@@ -126,7 +130,7 @@ begin
 				end if;
 
 			when DATA_TX =>
-				if (out_ready = '1') then
+				if is_true(out_ready) then
 					state <= DATA_RX;
 				end if;
 

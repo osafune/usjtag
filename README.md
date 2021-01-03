@@ -10,6 +10,10 @@ FTDI USBシリアル変換（FT230X/FT231X/FT234XD）を使って、Intel FPGA�
 	- 接続先は仮想JTAGデバイスのため、ピンの走査やFPGAコンフィギュレーション等、ハードウェアの直接制御はできません
 	- 接続は2Mbpsの調歩同期なのでJTAG転送レートは遅くなります
 
+- 実行環境
+	- Quartus Prime 17.1以降
+
+
 # License
 The MIT License (MIT)  
 Copyright (c) 2020 J-7SYSTEM WORKS LIMITED.
